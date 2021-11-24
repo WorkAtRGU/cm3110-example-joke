@@ -12,11 +12,11 @@
         android:id="@+id/tv_joke"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/tv_getting_joke"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Why did the chicken cross the road?" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_reveal"

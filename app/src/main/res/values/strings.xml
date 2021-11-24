@@ -4,4 +4,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="btn_reveal">reveal</string>
     <string name="btn_next_joke">tell me another one</string>
+    <string name="tv_getting_joke">Just getting a joke for you...</string>
 </resources>
