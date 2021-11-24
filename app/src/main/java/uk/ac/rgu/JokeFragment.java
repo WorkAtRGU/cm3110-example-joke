@@ -20,7 +20,7 @@ import java.util.Random;
  */
 public class JokeFragment extends Fragment implements View.OnClickListener {
 
-    private String mSetup;
+    private String mJokeSetup;
     private String mPunchline;
 
     public JokeFragment() {
