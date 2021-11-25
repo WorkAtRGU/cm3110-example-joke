@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="To get to the other side" />
+        tools:text="error" />
 
     <Button
         android:id="@+id/btn_next_joke"

@@ -5,11 +5,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Random;
 
@@ -22,6 +35,7 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
 
     private String mJokeSetup;
     private String mPunchline;
+    private TextView mTvSetup;
 
     public JokeFragment() {
         // Required empty public constructor
@@ -64,6 +78,8 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
         Button revealButton = view.findViewById(R.id.btn_reveal);
         revealButton.setOnClickListener(this);
 
+        mTvSetup = view.findViewById(R.id.tv_joke);
+
         // download a joke and update the ui
         downloadJokeUpdateUI();
     }
@@ -72,6 +88,10 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == R.id.btn_reveal){
             // launch the action to navigate to the punchline fragment
+            Bundle bundle = new Bundle();
+            bundle.putString("arg_punchline", mPunchline);
+
+            Navigation.findNavController(view).navigate(R.id.action_jokeFragment_to_punchlineFragment, bundle);
         }
     }
 
@@ -79,8 +99,38 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
      * Downloads a joke, updates this object's member variables, and the UI
      */
     private void downloadJokeUpdateUI() {
+        String url = String.format("https://cm3110-2021-jokes-default-rtdb.europe-west1.firebasedatabase.app/%o.json", generateRandomNumber());
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            mJokeSetup = obj.getString("setup");
+                            mPunchline = obj.getString("punchline");
+                            mTvSetup.setText(mJokeSetup);
+                        } catch (JSONException e){
+                            mTvSetup.setText("Error processing json");
+                            Log.d("JOKE", e.getLocalizedMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mTvSetup.setText("Error downloading json");
+                Log.d("JOKE", error.getLocalizedMessage());
+            }
+        });
+
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(request);
     }
-    
+
+
+    /**
+     * Generates a random number between 0 and 115 inclusive.
+     * @return a random number between 0 and 115 inclusiv2
+     */
     private int generateRandomNumber(){
         // adated from https://www.educative.io/edpresso/how-to-generate-random-numbers-in-java
         int max = 116;

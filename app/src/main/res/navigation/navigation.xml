@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navigation">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/jokeFragment">
 
+    <fragment
+        android:id="@+id/jokeFragment"
+        android:name="uk.ac.rgu.JokeFragment"
+        android:label="fragment_joke"
+        tools:layout="@layout/fragment_joke" >
+        <action
+            android:id="@+id/action_jokeFragment_to_punchlineFragment"
+            app:destination="@id/punchlineFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/punchlineFragment"
+        android:name="uk.ac.rgu.PunchlineFragment"
+        android:label="fragment_punchline"
+        tools:layout="@layout/fragment_punchline" >
+        <argument
+            android:name="arg_punchline"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_punchlineFragment_to_jokeFragment"
+            app:destination="@id/jokeFragment" />
+    </fragment>
 </navigation>
