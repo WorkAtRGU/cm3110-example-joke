@@ -24,6 +24,7 @@
             app:destination="@id/jokeFragment" />
         <argument
             android:name="arg_punchline"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

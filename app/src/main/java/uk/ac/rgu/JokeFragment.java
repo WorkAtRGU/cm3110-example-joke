@@ -5,11 +5,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Random;
 
@@ -22,6 +35,7 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
 
     private String mJokeSetup;
     private String mPunchline;
+    private TextView mTvJokeSetup;
 
     public JokeFragment() {
         // Required empty public constructor
@@ -64,6 +78,9 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
         Button revealButton = view.findViewById(R.id.btn_reveal);
         revealButton.setOnClickListener(this);
 
+        // get the TextView
+        mTvJokeSetup = view.findViewById(R.id.tv_joke);
+
         // download a joke and update the ui
         downloadJokeUpdateUI();
     }
@@ -72,6 +89,9 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == R.id.btn_reveal){
             // launch the action to navigate to the punchline fragment
+            Bundle bundle = new Bundle();
+            bundle.putString("arg_punchline", mPunchline);
+            Navigation.findNavController(view).navigate(R.id.action_jokeFragment_to_punchlineFragment, bundle);
         }
     }
 
@@ -79,6 +99,33 @@ public class JokeFragment extends Fragment implements View.OnClickListener {
      * Downloads a joke, updates this object's member variables, and the UI
      */
     private void downloadJokeUpdateUI() {
+        String url = String.format("https://cm3110-2021-jokes-default-rtdb.europe-west1.firebasedatabase.app/%o.json", generateRandomNumber());
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // convert response into a JSON object for processing
+                        JSONObject obj = null;
+                        try {
+                            obj = new JSONObject(response);
+                            // get the setup from obj
+                            mJokeSetup = obj.getString("setup");
+                            mTvJokeSetup.setText(mJokeSetup);
+                            // get the punchline from obj
+                            mPunchline = obj.getString("punchline");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("TAG", error.getLocalizedMessage());
+            }
+        });
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(request);
+
     }
     
     private int generateRandomNumber(){
